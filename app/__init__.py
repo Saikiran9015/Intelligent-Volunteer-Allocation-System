@@ -9,7 +9,10 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
-    mongo.init_app(app)
+    mongo.init_app(app, 
+                  tlsCAFile=app.config.get('MONGO_TLSCAFILE'),
+                  tlsAllowInvalidCertificates=app.config.get('MONGO_TLSALLOWINVALIDCERTIFICATES', True),
+                  tlsAllowInvalidHostnames=app.config.get('MONGO_TLSALLOWINVALIDHOSTNAMES', True))
     
     # Ensure Geospatial Indices
     with app.app_context():
