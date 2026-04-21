@@ -80,9 +80,21 @@ def impact_stats():
         total_donors = mongo.db.users.count_documents({"role": "donor"})
         verified_users = mongo.db.users.count_documents({"otp_verified": True})
         total_donations = mongo.db.donations.count_documents({})
+        
+        return jsonify({
+            "status": "success",
+            "data": {
+                "total_users": total_users,
+                "total_ngos": total_ngos,
+                "total_volunteers": total_volunteers,
+                "total_donors": total_donors,
+                "verified_users": verified_users,
+                "total_donations": total_donations
+            }
+        })
     except Exception as e:
         print(f"Impact stats error: {e}")
-        total_users = total_ngos = total_volunteers = total_donors = verified_users = total_donations = 0
+        return jsonify({"status": "error", "message": str(e)}), 500
     
 @main_bp.route('/api/admin/analytics', methods=['GET'])
 def admin_analytics():

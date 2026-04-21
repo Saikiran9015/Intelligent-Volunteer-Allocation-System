@@ -4,6 +4,8 @@ from reportlab.lib import colors
 from reportlab.lib.units import inch
 import io
 import datetime
+import hmac
+import hashlib
 
 def generate_donation_receipt(name, email, amount, donation_id):
     buffer = io.BytesIO()
