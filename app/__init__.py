@@ -14,13 +14,9 @@ def create_app(config_class=Config):
                   tlsAllowInvalidCertificates=app.config.get('MONGO_TLSALLOWINVALIDCERTIFICATES', True),
                   tlsAllowInvalidHostnames=app.config.get('MONGO_TLSALLOWINVALIDHOSTNAMES', True))
     
-    # Ensure Geospatial Indices
-    with app.app_context():
-        try:
-            mongo.db.users.create_index([("location", "2dsphere")])
-            mongo.db.pickup_requests.create_index([("location", "2dsphere")])
-        except Exception as e:
-            app.logger.warning(f"Could not create geospatial indices: {e}")
+    # In serverless environments like Vercel, we should avoid blocking startup
+    # with index creation which can timeout (especially if DB is waking up).
+    # Indices should be created once in Atlas or through a separate migration.
 
     socketio.init_app(app, cors_allowed_origins="*")
 
