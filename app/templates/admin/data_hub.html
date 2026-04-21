@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+
+{% block title %}Elite Data Hub | UnitySync Command Intelligence{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar glass" style="border: none; border-right: 1px solid var(--slate-200); background: #0f172a; color: white;">
+        <div style="margin-bottom: 40px; padding: 0 10px;">
+            <p style="font-size: 0.7rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 0.1em;">Master Control</p>
+            <nav style="display: flex; flex-direction: column; gap: 8px;">
+                <a href="/admin" class="btn btn-outline" style="justify-content: flex-start; color: #94a3b8; border: none; width: 100%;">
+                    <i class="fas fa-chart-pie" style="width: 20px;"></i> Analytics Hub
+                </a>
+                <a href="/admin/verify-ngos" class="btn btn-outline" style="justify-content: flex-start; color: #94a3b8; border: none; width: 100%;">
+                    <i class="fas fa-user-shield" style="width: 20px;"></i> NGO Verification
+                </a>
+                <a href="/admin/disaster-response" class="btn btn-outline" style="justify-content: flex-start; color: #94a3b8; border: none; width: 100%;">
+                    <i class="fas fa-shield-virus" style="width: 20px;"></i> Disaster Response
+                </a>
+                <a href="/admin/data-hub" class="btn" style="justify-content: flex-start; background: #2563eb; color: white; border: none; width: 100%;">
+                    <i class="fas fa-database" style="width: 20px;"></i> Elite Data Hub
+                </a>
+                <a href="/admin/notifications" class="btn btn-outline" style="justify-content: flex-start; color: #94a3b8; border: none; width: 100%;">
+                    <i class="fas fa-satellite-dish" style="width: 20px;"></i> Global Broadcast
+                </a>
+                <a href="/admin/audit-logs" class="btn btn-outline" style="justify-content: flex-start; color: #94a3b8; border: none; width: 100%;">
+                    <i class="fas fa-clock-rotate-left" style="width: 20px;"></i> Audit Logs
+                </a>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header style="margin-bottom: 40px; display: flex; justify-content: space-between; align-items: flex-end;">
+            <div>
+                <span class="badge badge-primary">UnitySync Intelligence Core</span>
+                <h1 style="font-size: 2.2rem; margin-top: 8px;">Elite Universal Data Hub</h1>
+                <p style="color: var(--slate-500);">Granular intelligence across all NGOs, Donors, and Volunteers.</p>
+            </div>
+            <div style="display: flex; gap: 15px;">
+                <button class="btn btn-outline" onclick="exportToCSV()"><i class="fas fa-file-export"></i> Export CSV</button>
+                <button class="btn btn-primary" onclick="refreshHub()"><i class="fas fa-sync"></i> Refresh Data</button>
+            </div>
+        </header>
+
+        <!-- Command Filter Bar -->
+        <div class="elite-card" style="padding: 20px; margin-bottom: 30px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; background: #f8fafc; border: 1px solid var(--slate-200);">
+            <div>
+                <label style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--slate-400); text-transform: uppercase; margin-bottom: 5px;">Entity Type</label>
+                <select id="filter-role" class="hub-select" onchange="refreshHub()">
+                    <option value="all">All Entities</option>
+                    <option value="ngo">NGOs</option>
+                    <option value="donor">Donors</option>
+                    <option value="volunteer">Volunteers</option>
+                </select>
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--slate-400); text-transform: uppercase; margin-bottom: 5px;">State</label>
+                <input type="text" id="filter-state" class="hub-select" placeholder="Enter State..." onkeyup="debounceRefresh()">
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--slate-400); text-transform: uppercase; margin-bottom: 5px;">District</label>
+                <input type="text" id="filter-district" class="hub-select" placeholder="Enter District..." onkeyup="debounceRefresh()">
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--slate-400); text-transform: uppercase; margin-bottom: 5px;">Village/Town</label>
+                <input type="text" id="filter-village" class="hub-select" placeholder="Enter Village..." onkeyup="debounceRefresh()">
+            </div>
+            <div style="display: flex; align-items: flex-end;">
+                <button class="btn btn-outline" onclick="resetFilters()" style="width: 100%; height: 40px;">Clear All</button>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px; margin-bottom: 30px;">
+            <!-- Main Data Table -->
+            <div class="elite-card" style="padding: 0; min-height: 500px;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead style="background: #f1f5f9;">
+                        <tr style="text-align: left;">
+                            <th style="padding: 15px 25px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--slate-400);">Identity</th>
+                            <th style="padding: 15px 25px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--slate-400);">Role</th>
+                            <th style="padding: 15px 25px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--slate-400);">Location Palette</th>
+                            <th style="padding: 15px 25px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--slate-400);">Status</th>
+                            <th style="padding: 15px 25px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--slate-400);">Protocol</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hub-table-body">
+                        <!-- Dynamic Content -->
+                    </tbody>
+                </table>
+                <div id="hub-loading" style="display: none; padding: 40px; text-align: center;">
+                    <i class="fas fa-spinner fa-spin fa-2x" style="color: var(--primary);"></i>
+                </div>
+            </div>
+
+            <!-- Visualization Cluster -->
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+                <div class="elite-card" style="padding: 30px;">
+                    <h4 style="margin-bottom: 20px;">Platform Distribution</h4>
+                    <div style="height: 250px;">
+                        <canvas id="distributionChart"></canvas>
+                    </div>
+                </div>
+                <div class="elite-card" style="padding: 30px; border-left: 5px solid var(--primary);">
+                    <h4 style="margin-bottom: 10px;">Regional Density</h4>
+                    <p style="font-size: 0.8rem; color: var(--slate-400);">Aggregated across all registered entities.</p>
+                    <div id="density-stats" style="margin-top: 20px; display: flex; flex-direction: column; gap: 15px;">
+                        <!-- Dynamic Stats -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<style>
+    .hub-select {
+        width: 100%;
+        padding: 10px 15px;
+        border: 1px solid var(--slate-200);
+        border-radius: 10px;
+        font-size: 0.85rem;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    .hub-select:focus { border-color: var(--primary); }
+    .role-badge {
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+</style>
+
+<script>
+    let distChart;
+    let debounceTimer;
+
+    async function refreshHub() {
+        const role = document.getElementById('filter-role').value;
+        const state = document.getElementById('filter-state').value;
+        const district = document.getElementById('filter-district').value;
+        const village = document.getElementById('filter-village').value;
+
+        const tableBody = document.getElementById('hub-table-body');
+        const loading = document.getElementById('hub-loading');
+
+        tableBody.innerHTML = '';
+        loading.style.display = 'block';
+
+        try {
+            const url = `/api/admin/global-hub?role=${role}&state=${state}&district=${district}&village=${village}`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            loading.style.display = 'none';
+
+            data.data.forEach(user => {
+                const tr = document.createElement('tr');
+                tr.style.borderBottom = '1px solid #f1f5f9';
+                
+                let roleColor = '#4f46e5';
+                if(user.role === 'volunteer') roleColor = '#10b981';
+                if(user.role === 'donor') roleColor = '#3b82f6';
+
+                tr.innerHTML = `
+                    <td style="padding: 15px 25px;">
+                        <div style="font-weight: 700;">${user.name}</div>
+                        <div style="font-size: 0.75rem; color: var(--slate-400);">${user.email}</div>
+                    </td>
+                    <td style="padding: 15px 25px;">
+                        <span class="role-badge" style="background: ${roleColor}20; color: ${roleColor};">${user.role}</span>
+                    </td>
+                    <td style="padding: 15px 25px; font-size: 0.8rem; color: var(--slate-600);">${user.location}</td>
+                    <td style="padding: 15px 25px;">
+                        <span class="badge ${user.status === 'Active' ? 'badge-success' : 'badge-warning'}">${user.status}</span>
+                    </td>
+                    <td style="padding: 15px 25px;">
+                        <button class="btn btn-outline" style="padding: 5px 10px; font-size: 0.7rem;" onclick="viewEntity('${user.id}')">INTEL</button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+
+            updateCharts(data.stats);
+            updateDensity(data.data);
+
+        } catch (e) {
+            console.error(e);
+            loading.innerHTML = 'Error fetching intelligence.';
+        }
+    }
+
+    function debounceRefresh() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(refreshHub, 500);
+    }
+
+    function resetFilters() {
+        document.getElementById('filter-role').value = 'all';
+        document.getElementById('filter-state').value = '';
+        document.getElementById('filter-district').value = '';
+        document.getElementById('filter-village').value = '';
+        refreshHub();
+    }
+
+    function updateCharts(stats) {
+        const ctx = document.getElementById('distributionChart').getContext('2d');
+        if (distChart) distChart.destroy();
+        
+        distChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['NGOs', 'Donors', 'Volunteers'],
+                datasets: [{
+                    data: [stats.ngo, stats.donor, stats.volunteer],
+                    backgroundColor: ['#4f46e5', '#3b82f6', '#10b981'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' } },
+                cutout: '70%'
+            }
+        });
+    }
+
+    function updateDensity(users) {
+        const densityDiv = document.getElementById('density-stats');
+        densityDiv.innerHTML = '';
+        
+        // Simple aggregation of states for display
+        const states = {};
+        users.forEach(u => {
+            const s = u.location.split(',')[0].trim();
+            states[s] = (states[s] || 0) + 1;
+        });
+
+        Object.entries(states).slice(0, 5).forEach(([state, count]) => {
+            const div = document.createElement('div');
+            div.innerHTML = `
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.85rem; font-weight: 700;">
+                    <span>${state}</span>
+                    <span style="color: var(--primary);">${count} Entities</span>
+                </div>
+                <div style="height: 6px; background: var(--slate-100); border-radius: 3px; overflow: hidden;">
+                    <div style="height: 100%; width: ${Math.min(count * 10, 100)}%; background: var(--primary); border-radius: 3px;"></div>
+                </div>
+            `;
+            densityDiv.appendChild(div);
+        });
+    }
+
+    function viewEntity(id) {
+        alert('Universal Entity Intelligence Module for ID ' + id + ' coming in next cycle.');
+    }
+
+    function exportToCSV() {
+        alert('Preparing encrypted CSV export of current intelligence snapshot...');
+    }
+
+    document.addEventListener('DOMContentLoaded', refreshHub);
+</script>
+{% endblock %}

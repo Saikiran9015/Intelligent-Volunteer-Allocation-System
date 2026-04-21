@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block title %}UnitySync | Connecting Donors, Volunteers & NGOs{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero" style="min-height: 90vh; display: flex; align-items: center; background: radial-gradient(circle at top right, rgba(79, 70, 229, 0.05), transparent);">
+    <div class="container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;">
+        <div class="hero-content animate-fade-in">
+            <span class="badge" style="background: rgba(79, 70, 229, 0.1); color: var(--primary); margin-bottom: 24px;">Transforming Social Impact</span>
+            <h1 style="font-size: 4rem; line-height: 1.1; margin-bottom: 24px; letter-spacing: -0.02em;">Smart Resource Allocation for <span style="color: var(--primary);">Real Change</span></h1>
+            <p style="font-size: 1.25rem; color: var(--text-muted); margin-bottom: 40px; max-width: 500px;">
+                Digitize community needs, coordinate volunteers intelligently, and bridge the gap between resources and results with data-driven precision.
+            </p>
+            <div style="display: flex; gap: 20px;">
+                <a href="/register" class="btn btn-primary" style="padding: 16px 32px; font-size: 1.1rem;">Get Started Free <i class="fas fa-arrow-right"></i></a>
+                <a href="/discover" class="btn btn-outline" style="padding: 16px 32px; font-size: 1.1rem;">Explore NGOs</a>
+            </div>
+        </div>
+        <div class="hero-image animate-fade-in" style="position: relative;">
+            <div style="position: absolute; top: -20px; left: -20px; width: 100px; height: 100px; background: var(--secondary); opacity: 0.1; border-radius: 50%; filter: blur(40px);"></div>
+            <img src="https://images.unsplash.com/photo-1559027615-cd44516640ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Community Support" style="width: 100%; border-radius: 40px; box-shadow: 0 40px 100px rgba(79, 70, 229, 0.15); border: 8px solid white;">
+        </div>
+    </div>
+</section>
+
+<!-- Impact Metrics -->
+<section style="margin-top: -100px; padding-bottom: 100px; position: relative; z-index: 10;">
+    <div class="container">
+        <div class="glass" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; border-radius: 40px; padding: 60px;">
+            <div style="text-align: center;">
+                <div style="font-size: 2.5rem; color: var(--primary); font-weight: 800;" class="counter" data-target="24500">0</div>
+                <p style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 10px;">Donations Made</p>
+            </div>
+            <div style="text-align: center;">
+                <div style="font-size: 2.5rem; color: var(--secondary); font-weight: 800;" class="counter" data-target="1200">0</div>
+                <p style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 10px;">Active NGOs</p>
+            </div>
+            <div style="text-align: center;">
+                <div style="font-size: 2.5rem; color: var(--accent); font-weight: 800;" class="counter" data-target="52000">0</div>
+                <p style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 10px;">Lives Impacted</p>
+            </div>
+            <div style="text-align: center;">
+                <div style="font-size: 2.5rem; color: var(--primary); font-weight: 800;" class="counter" data-target="8600">0</div>
+                <p style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 10px;">Volunteers</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Live Heatmap Section -->
+<section style="padding: 100px 0; background: #fff;">
+    <div class="container">
+        <div style="text-align: center; max-width: 700px; margin: 0 auto 60px;">
+            <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: var(--accent);">Real-Time Insights</span>
+            <h2 style="font-size: 3rem; margin-bottom: 20px;">Community Needs Map</h2>
+            <p style="color: var(--text-muted); font-size: 1.1rem;">We digitize scattered field reports to show exactly where resources are needed most. Explore the high-urgency hotspots below.</p>
+        </div>
+        
+        <div id="mini-discovery-map" style="height: 500px; border-radius: 40px; box-shadow: 0 30px 60px -12px rgba(0,0,0,0.1); border: 1px solid #f1f5f9; overflow: hidden;">
+            <!-- Map renders here -->
+        </div>
+    </div>
+</section>
+
+<!-- Features Grid -->
+<section style="padding: 100px 0; background: #f8fafc;">
+    <div class="container">
+        <div class="section-header" style="text-align: center; margin-bottom: 60px;">
+            <h2 style="font-size: 2.5rem;">Core Coordination Modules</h2>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;">
+            <div class="feature-card">
+                <div class="feature-icon" style="background: rgba(79, 70, 229, 0.1); color: var(--primary); width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 20px;">
+                    <i class="fas fa-file-invoice"></i>
+                </div>
+                <h3>Data Digitization</h3>
+                <p style="color: var(--text-muted);">Convert paper surveys into digital field reports to build actionable community insights.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--accent); width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 20px;">
+                    <i class="fas fa-route"></i>
+                </div>
+                <h3>Smart Dispatch</h3>
+                <p style="color: var(--text-muted);">Intelligently match volunteers to tasks based on location proximity and skill relevance.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background: rgba(14, 165, 233, 0.1); color: var(--secondary); width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 20px;">
+                    <i class="fas fa-shield-check"></i>
+                </div>
+                <h3>Trust Engine</h3>
+                <p style="color: var(--text-muted);">Aadhaar-based identity verification ensures every human in the loop is authenticated.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Trusted NGOs Section -->
+<section style="padding: 100px 0; background: var(--surface);">
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 60px;">
+            <div>
+                <span class="badge badge-primary">Verified Partners</span>
+                <h2 style="font-size: 2.5rem; margin-top: 10px;">Trusted NGOs in the Network</h2>
+            </div>
+            <a href="/discover" class="btn btn-outline">View Full Registry</a>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
+            <div class="glass" style="padding: 30px; border-radius: 24px; text-align: center;">
+                <div style="width: 60px; height: 60px; background: #f1f5f9; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-hand-holding-heart" style="color: var(--primary);"></i>
+                </div>
+                <h4 style="margin-bottom: 5px;">Care Connect</h4>
+                <p style="font-size: 0.75rem; color: var(--text-muted);">Verified Foundation</p>
+            </div>
+            <div class="glass" style="padding: 30px; border-radius: 24px; text-align: center;">
+                <div style="width: 60px; height: 60px; background: #f1f5f9; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-school" style="color: var(--secondary);"></i>
+                </div>
+                <h4 style="margin-bottom: 5px;">EduImpact</h4>
+                <p style="font-size: 0.75rem; color: var(--text-muted);">Vetted Society</p>
+            </div>
+            <div class="glass" style="padding: 30px; border-radius: 24px; text-align: center;">
+                <div style="width: 60px; height: 60px; background: #f1f5f9; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-leaf" style="color: var(--success);"></i>
+                </div>
+                <h4 style="margin-bottom: 5px;">Green Pulse</h4>
+                <p style="font-size: 0.75rem; color: var(--text-muted);">Registered Trust</p>
+            </div>
+            <div class="glass" style="padding: 30px; border-radius: 24px; text-align: center;">
+                <div style="width: 60px; height: 60px; background: #f1f5f9; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-ambulance" style="color: var(--danger);"></i>
+                </div>
+                <h4 style="margin-bottom: 5px;">Rapid Response</h4>
+                <p style="font-size: 0.75rem; color: var(--text-muted);">Nonprofit Org</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Success Stories -->
+<section style="padding: 100px 0; background: var(--slate-900); color: white;">
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 60px;">
+            <h2 style="font-size: 2.5rem; color: white;">Impact Success Stories</h2>
+            <p style="color: var(--slate-400);">Witness the tangible results of coordinated community action.</p>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+            <div style="background: rgba(255,255,255,0.05); padding: 40px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 20px;">
+                    <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=100&h=100" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
+                    <div>
+                        <h4 style="color: white; margin: 0;">Operation Hunger Relief</h4>
+                        <p style="font-size: 0.8rem; color: var(--primary-light);">Odisha Disaster 2024</p>
+                    </div>
+                </div>
+                <p style="color: var(--slate-300); font-style: italic;">"Thanks to UnitySync's real-time coordination, we delivered 5,000 meals to cut-off villages within 48 hours of the storm hitting. The geospatial data was the key factor."</p>
+            </div>
+            <div style="background: rgba(255,255,255,0.05); padding: 40px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 20px;">
+                    <img src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?auto=format&fit=crop&w=100&h=100" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
+                    <div>
+                        <h4 style="color: white; margin: 0;">Skill-Based Literacy Drive</h4>
+                        <p style="font-size: 0.8rem; color: var(--primary-light);">Urban Education Program</p>
+                    </div>
+                </div>
+                <p style="color: var(--slate-300); font-style: italic;">"Matching our students with certified linguists using the UnitySync volunteer dashboard increased our literacy transition rate by 40% in just six months."</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://leaflet.github.io/Leaflet.heat/dist/leaflet-heat.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const miniMap = L.map('mini-discovery-map', { zoomControl: false, scrollWheelZoom: false }).setView([17.3850, 78.4867], 12);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(miniMap);
+        
+        // Sample Needs Heat Data
+        const heatPoints = [
+            [17.3850, 78.4867, 0.8], // Warangal Hub
+            [17.4000, 78.5000, 0.6], // Hanamkonda
+            [17.3700, 78.4700, 0.9], // Kazipet
+            [17.3900, 78.4900, 0.5]
+        ];
+        
+        L.heatLayer(heatPoints, {radius: 40, blur: 25, maxZoom: 17, gradient: {0.4: 'indigo', 0.65: 'blue', 1: 'cyan'}}).addTo(miniMap);
+
+        // Counter Logic Re-initialization
+        const counters = document.querySelectorAll('.counter');
+        const animateCounters = () => {
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const count = +counter.innerText;
+                const inc = target / 200;
+                if (count < target) {
+                    counter.innerText = Math.ceil(count + inc);
+                    setTimeout(animateCounters, 1);
+                } else counter.innerText = target;
+            });
+        };
+        const observer = new IntersectionObserver((entries) => {
+            if(entries[0].isIntersecting) animateCounters();
+        }, { threshold: 0.5 });
+        if(counters.length) observer.observe(counters[0].parentElement);
+    });
+</script>
+{% endblock %}

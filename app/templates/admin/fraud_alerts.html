@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block title %}Disaster Dispatch | Elite Admin{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar glass" style="border: none; border-right: 1px solid var(--slate-200); background: #0f172a; color: white;">
+        <div style="margin-bottom: 40px; padding: 0 10px;">
+            <p style="font-size: 0.7rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 0.1em;">Master Control</p>
+            <nav style="display: flex; flex-direction: column; gap: 8px;">
+                <a href="/admin" class="btn btn-outline" style="justify-content: flex-start; color: #94a3b8; border: none; width: 100%;">
+                    <i class="fas fa-chart-pie" style="width: 20px;"></i> Analytics Hub
+                </a>
+                <a href="/admin/verify-ngos" class="btn btn-outline" style="justify-content: flex-start; color: #94a3b8; border: none; width: 100%;">
+                    <i class="fas fa-user-shield" style="width: 20px;"></i> NGO Verification
+                </a>
+                <a href="/admin/disaster-response" class="btn" style="justify-content: flex-start; background: #2563eb; color: white; border: none; width: 100%;">
+                    <i class="fas fa-shield-virus" style="width: 20px;"></i> Disaster Response
+                </a>
+                <a href="/admin/data-hub" class="btn btn-outline" style="justify-content: flex-start; color: #94a3b8; border: none; width: 100%;">
+                    <i class="fas fa-database" style="width: 20px;"></i> Elite Data Hub
+                </a>
+                <a href="/admin/audit-logs" class="btn btn-outline" style="justify-content: flex-start; color: #94a3b8; border: none; width: 100%;">
+                    <i class="fas fa-clock-rotate-left" style="width: 20px;"></i> Audit Logs
+                </a>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px;">
+            <div>
+                <span class="badge" style="background: rgba(239, 68, 68, 0.1); color: var(--danger);">Critical Protocol</span>
+                <h1 style="font-size: 2.2rem; margin-top: 8px;">Disaster Response Center</h1>
+                <p style="color: var(--slate-500);">Dispatch emergency SMS alerts to nearby volunteers with geospatial precision.</p>
+            </div>
+            <button class="btn btn-primary" onclick="window.location.reload()" style="background: #0f172a;">Refresh Map</button>
+        </header>
+
+        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 32px;">
+            <!-- Interactive Map -->
+            <div class="elite-card" style="padding: 0; height: 600px; position: relative; overflow: hidden;">
+                <div id="disaster-map" style="height: 100%; width: 100%;"></div>
+                <div style="position: absolute; bottom: 20px; left: 20px; right: 20px; background: rgba(15, 23, 42, 0.9); color: white; padding: 15px; border-radius: 12px; backdrop-filter: blur(10px); z-index: 1000; border: 1px solid rgba(255,255,255,0.1);">
+                    <p style="font-size: 0.75rem; color: #38bdf8; font-weight: 700; text-transform: uppercase;">Map Instructions</p>
+                    <p style="font-size: 0.85rem;">Click anywhere on the map to set the <b>Disaster Epicenter</b>. The system will calculate volunteer density within the dispatch radius.</p>
+                </div>
+            </div>
+
+            <!-- Dispatch Controls -->
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+                <div class="elite-card" style="border-left: 5px solid var(--danger);">
+                    <h3 style="margin-bottom: 20px;">Emergency Configuration</h3>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-size: 0.75rem; font-weight: 800; color: var(--slate-400); text-transform: uppercase; margin-bottom: 8px;">Target Radius (KM)</label>
+                        <input type="range" id="dispatch-radius" min="5" max="100" value="50" step="5" oninput="updateRadiusLabel(this.value)" style="width: 100%; cursor: pointer;">
+                        <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                            <span style="font-size: 0.75rem; font-weight: 700;">5km</span>
+                            <span id="radius-label" style="font-size: 0.85rem; font-weight: 800; color: #2563eb;">50 km</span>
+                            <span style="font-size: 0.75rem; font-weight: 700;">100km</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-size: 0.75rem; font-weight: 800; color: var(--slate-400); text-transform: uppercase; margin-bottom: 8px;">Urgency Message</label>
+                        <textarea id="dispatch-message" rows="4" style="width: 100%; padding: 15px; border: 1px solid var(--slate-200); border-radius: 12px; font-size: 0.9rem; outline: none;" placeholder="Brave Volunteers, we need you! A disaster has been reported at this location. Please check in if available."></textarea>
+                    </div>
+
+                    <div style="background: var(--slate-50); padding: 15px; border-radius: 12px; margin-bottom: 24px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.8rem; color: var(--slate-500);">Selected Epicenter:</span>
+                            <span id="epicenter-coords" style="font-size: 0.8rem; font-weight: 700;">None (Click Map)</span>
+                        </div>
+                    </div>
+
+                    <button id="dispatch-btn" onclick="sendDispatch()" class="btn btn-primary" style="width: 100%; padding: 18px; background: #ef4444; border: none; font-weight: 700; letter-spacing: 0.05em; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2);">
+                        <i class="fas fa-satellite-dish mr-2"></i> INITIATE MASS DISPATCH
+                    </button>
+                </div>
+
+                <div class="elite-card">
+                    <h3 style="margin-bottom: 15px;">Active Risk Monitoring</h3>
+                    <div id="fraud-list" style="display: flex; flex-direction: column; gap: 15px;">
+                        {% for alert in alerts %}
+                        <div style="padding: 12px; background: rgba(239, 68, 68, 0.05); border-radius: 10px; border: 1px solid rgba(239, 68, 68, 0.1);">
+                            <p style="font-size: 0.8rem; font-weight: 700;">{{ alert.reason }}</p>
+                            <p style="font-size: 0.7rem; color: var(--slate-500);">IP: {{ alert.ip }} | Risk: {{ alert.risk }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Leaflet Integration -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    let map, marker, circle;
+    let selectedLat, selectedLng;
+
+    function initMap() {
+        map = L.map('disaster-map').setView([17.9689, 79.5941], 12); // Default to Warangal area
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+        map.on('click', function(e) {
+            selectedLat = e.latlng.lat;
+            selectedLng = e.latlng.lng;
+            
+            if (marker) map.removeLayer(marker);
+            if (circle) map.removeLayer(circle);
+
+            marker = L.marker([selectedLat, selectedLng]).addTo(map);
+            updateVisualRadius();
+            
+            document.getElementById('epicenter-coords').innerText = `${selectedLat.toFixed(4)}, ${selectedLng.toFixed(4)}`;
+            document.getElementById('dispatch-btn').disabled = false;
+        });
+    }
+
+    function updateRadiusLabel(val) {
+        document.getElementById('radius-label').innerText = val + ' km';
+        if (selectedLat) updateVisualRadius();
+    }
+
+    function updateVisualRadius() {
+        if (circle) map.removeLayer(circle);
+        const radius = document.getElementById('dispatch-radius').value * 1000;
+        circle = L.circle([selectedLat, selectedLng], {
+            color: '#ef4444',
+            fillColor: '#ef4444',
+            fillOpacity: 0.15,
+            radius: radius,
+            weight: 2
+        }).addTo(map);
+    }
+
+    async function sendDispatch() {
+        const message = document.getElementById('dispatch-message').value;
+        const radius = document.getElementById('dispatch-radius').value;
+
+        if (!selectedLat) {
+            alert('Please select a disaster epicenter on the map first.');
+            return;
+        }
+
+        if (!confirm('CONFIRM EMERGENCY DISPATCH: This will send mass SMS alerts to all nearby volunteers. Proceed?')) return;
+
+        const btn = document.getElementById('dispatch-btn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> DISPATCHING PROTOCOL...';
+        btn.disabled = true;
+
+        try {
+            const response = await fetch('/api/admin/disaster-dispatch', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    lat: selectedLat,
+                    lng: selectedLng,
+                    radius: radius,
+                    message: message || "Immediate assistance required in your area."
+                })
+            });
+
+            const data = await response.json();
+            if (data.status === 'success') {
+                alert(`SUCCESS: Alerts sent to ${data.notified} volunteers near the epicenter.`);
+            } else {
+                alert('ERROR: Dispatch protocol failed to initialize.');
+            }
+        } catch (e) {
+            alert('CRITICAL ERROR: Connection to dispatch server lost.');
+        } finally {
+            btn.innerHTML = '<i class="fas fa-satellite-dish mr-2"></i> INITIATE MASS DISPATCH';
+            btn.disabled = false;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', initMap);
+</script>
+{% endblock %}

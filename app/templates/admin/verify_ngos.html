@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}NGO Verification | Elite Admin{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar glass" style="border: none; border-right: 1px solid var(--slate-200); background: #0f172a; color: white;">
+        <div style="margin-bottom: 40px; padding: 0 10px;">
+            <p style="font-size: 0.7rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 0.1em;">Master Control</p>
+            <nav style="display: flex; flex-direction: column; gap: 8px;">
+                <a href="/admin" class="btn btn-outline" style="justify-content: flex-start; color: #94a3b8; border: none; width: 100%;">
+                    <i class="fas fa-chart-pie" style="width: 20px;"></i> Analytics Hub
+                </a>
+                <a href="/admin/verify-ngos" class="btn" style="justify-content: flex-start; background: #2563eb; color: white; border: none; width: 100%;">
+                    <i class="fas fa-user-shield" style="width: 20px;"></i> NGO Verification
+                </a>
+                <a href="/admin/disaster-response" class="btn btn-outline" style="justify-content: flex-start; color: #94a3b8; border: none; width: 100%;">
+                    <i class="fas fa-shield-virus" style="width: 20px;"></i> Disaster Response
+                </a>
+                <a href="/admin/data-hub" class="btn btn-outline" style="justify-content: flex-start; color: #94a3b8; border: none; width: 100%;">
+                    <i class="fas fa-database" style="width: 20px;"></i> Elite Data Hub
+                </a>
+                <a href="/admin/audit-logs" class="btn btn-outline" style="justify-content: flex-start; color: #94a3b8; border: none; width: 100%;">
+                    <i class="fas fa-clock-rotate-left" style="width: 20px;"></i> Audit Logs
+                </a>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header style="margin-bottom: 40px;">
+            <span class="badge badge-primary">Verification Protocol</span>
+            <h1 style="font-size: 2.2rem; margin-top: 8px;">NGO Registry Management</h1>
+            <p style="color: var(--slate-500);">Verify organization credentials against national registries.</p>
+        </header>
+
+        <div class="elite-card" style="padding: 0; overflow: hidden;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead style="background: var(--slate-50);">
+                    <tr style="text-align: left;">
+                        <th style="padding: 16px 30px; font-size: 0.75rem; font-weight: 800; color: var(--slate-400); text-transform: uppercase;">NGO Identity</th>
+                        <th style="padding: 16px 30px; font-size: 0.75rem; font-weight: 800; color: var(--slate-400); text-transform: uppercase;">Registration ID</th>
+                        <th style="padding: 16px 30px; font-size: 0.75rem; font-weight: 800; color: var(--slate-400); text-transform: uppercase;">Location Metadata</th>
+                        <th style="padding: 16px 30px; font-size: 0.75rem; font-weight: 800; color: var(--slate-400); text-transform: uppercase;">Protocol Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ngo in ngos %}
+                    <tr style="border-bottom: 1px solid var(--slate-50);">
+                        <td style="padding: 20px 30px; font-weight: 700;">{{ ngo.name }}</td>
+                        <td style="padding: 20px 30px; color: var(--slate-500); font-family: monospace;">{{ ngo.reg_no }}</td>
+                        <td style="padding: 20px 30px;"><span class="badge" style="background: var(--slate-100);">{{ ngo.state }}, {{ ngo.district }}</span></td>
+                        <td style="padding: 20px 30px;">
+                            <button onclick="takeAction('{{ ngo._id }}', 'approve')" class="btn" style="padding: 8px 15px; font-size: 0.75rem; background: var(--success); color: white; border: none;">Approve</button>
+                            <button onclick="takeAction('{{ ngo._id }}', 'reject')" class="btn" style="padding: 8px 15px; font-size: 0.75rem; background: var(--danger); color: white; border: none; margin-left: 8px;">Reject</button>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" style="padding: 40px; text-align: center; color: var(--slate-400);">No pending NGO verifications in system.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<script>
+    async function takeAction(id, action) {
+        if (!confirm(`Confirm organization ${action}?`)) return;
+        const response = await fetch('/api/admin-action', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ id, action })
+        });
+        if (response.ok) {
+            alert(`NGO ${action}ed successfully.`);
+            window.location.reload();
+        }
+    }
+</script>
+{% endblock %}

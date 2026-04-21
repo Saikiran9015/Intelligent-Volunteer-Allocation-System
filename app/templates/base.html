@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}UnitySync Elite - NGO Coordination Platform{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- ChartJS & Leaflet -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
+</head>
+<body>
+    <header class="navbar glass">
+        <div class="container">
+            <a href="/" style="display: flex; align-items: center; gap: 12px; text-decoration: none;">
+                <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white;">
+                    <i class="fas fa-sync-alt" style="font-size: 1.2rem;"></i>
+                </div>
+                <span style="font-family: 'Outfit'; font-weight: 800; font-size: 1.5rem; color: var(--slate-900); letter-spacing: -0.02em;">UnitySync <span style="color: var(--primary);">Elite</span></span>
+            </a>
+            
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/discover">Discovery</a></li>
+                    <li><a href="/public-impact" style="font-weight: 700; color: var(--primary);">Public Impact</a></li>
+                    <li><a href="/donate">Donate</a></li>
+                </ul>
+            </nav>
+
+            <div class="nav-actions">
+                {% if session.get('user_id') %}
+                    <a href="/dashboard" class="btn btn-outline" style="padding: 10px 20px;">Dashboard</a>
+                    <a href="/logout" class="btn btn-primary" style="padding: 10px 20px; background: var(--slate-900);">Logout</a>
+                {% else %}
+                    <a href="/login" class="btn btn-outline" style="padding: 10px 20px;">Sign In</a>
+                    <a href="/register" class="btn btn-primary" style="padding: 10px 20px;">Get Started</a>
+                {% endif %}
+                <button id="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Impact Pulse Toast -->
+    <div id="impact-pulse" class="glass" style="position: fixed; bottom: 40px; left: 40px; padding: 20px 30px; border-radius: 20px; display: none; z-index: 10000; transform: translateY(100px); transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); align-items: center; gap: 15px; border-left: 5px solid var(--primary);">
+        <div style="width: 40px; height: 40px; background: var(--primary-alpha); color: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-heart-pulse"></i>
+        </div>
+        <div>
+            <h5 style="margin-bottom: 2px; font-size: 0.9rem;">Global Impact Pulse</h5>
+            <p id="pulse-msg" style="font-size: 0.8rem; color: var(--slate-500);">Someone just contributed to the ecosystem!</p>
+        </div>
+    </div>
+
+    <footer style="background: var(--slate-900); color: white; padding: 100px 0 60px;">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 80px;">
+                <div>
+                    <h2 style="font-family: 'Outfit'; font-size: 2rem; margin-bottom: 24px;">UnitySync Elite</h2>
+                    <p style="color: var(--slate-400); max-width: 400px; font-size: 1.1rem;">
+                        The ultimate intelligence layer for social impact. We empower NGOs with precision data and real-time coordination.
+                    </p>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 24px; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.8rem;">Resources</h4>
+                    <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px;">
+                        <li><a href="/discover" style="color: var(--slate-400); text-decoration: none;">Map Discovery</a></li>
+                        <li><a href="/visuals" style="color: var(--slate-400); text-decoration: none;">Impact Metrics</a></li>
+                        <li><a href="/feed" style="color: var(--slate-400); text-decoration: none;">Live Field Feed</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 24px; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.8rem;">Legal</h4>
+                    <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px;">
+                        <li><a href="#" style="color: var(--slate-400); text-decoration: none;">Privacy Protocol</a></li>
+                        <li><a href="#" style="color: var(--slate-400); text-decoration: none;">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div style="border-top: 1px solid var(--slate-800); margin-top: 60px; padding-top: 40px; text-align: center; color: var(--slate-500); font-size: 0.9rem;">
+                &copy; 2026 UnitySync Elite Platform. All rights reserved. Precision-built for community impact.
+            </div>
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+
+    <script>
+        const socket = io();
+        
+        socket.on('donation_pulse', (data) => {
+            const pulse = document.getElementById('impact-pulse');
+            const msg = document.getElementById('pulse-msg');
+            
+            msg.innerHTML = `<strong>${data.donor}</strong> donated ₹${data.amount} (+${data.impact} Impact)`;
+            pulse.style.display = 'flex';
+            setTimeout(() => pulse.style.transform = 'translateY(0)', 10);
+            
+            setTimeout(() => {
+                pulse.style.transform = 'translateY(150px)';
+                setTimeout(() => pulse.style.display = 'none', 500);
+            }, 5000);
+        });
+    </script>
+    <!-- Elite AI Assistant Hub -->
+    <div id="ai-hub-container" style="position: fixed; bottom: 30px; right: 30px; z-index: 9999; font-family: 'Inter', sans-serif;">
+        <!-- Pulsing FAB -->
+        <button id="ai-fab" onclick="toggleAIChat()" style="width: 60px; height: 60px; border-radius: 50%; background: var(--primary); color: white; border: none; cursor: pointer; box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4); display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative;">
+            <i class="fas fa-robot" style="font-size: 1.5rem;"></i>
+            <span style="position: absolute; top: -5px; right: -5px; width: 12px; height: 12px; background: #22c55e; border-radius: 50%; border: 2px solid white;"></span>
+        </button>
+
+        <!-- Chat Window (Glassmorphic) -->
+        <div id="ai-chat-window" class="glass" style="position: absolute; bottom: 80px; right: 0; width: 380px; height: 500px; border-radius: 24px; display: none; flex-direction: column; overflow: hidden; opacity: 0; transform: translateY(20px); transition: all 0.3s ease; box-shadow: 0 20px 50px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.4); background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);">
+            <!-- Header -->
+            <div style="padding: 20px; background: var(--primary); color: white; display: flex; align-items: center; gap: 12px;">
+                <div style="width: 35px; height: 35px; background: rgba(255,255,255,0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-brain" style="font-size: 0.9rem;"></i>
+                </div>
+                <div>
+                    <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0;">Elite Intel Assistant</h4>
+                    <p style="font-size: 0.65rem; opacity: 0.8; margin: 0; text-transform: uppercase; letter-spacing: 0.05em;">AI Active • Unified Pulse</p>
+                </div>
+                <button onclick="toggleAIChat()" style="margin-left: auto; background: none; border: none; color: white; cursor: pointer; font-size: 1.2rem;">&times;</button>
+            </div>
+
+            <!-- Messages Container -->
+            <div id="ai-messages" style="flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; scroll-behavior: smooth;">
+                <div style="background: var(--slate-100); padding: 12px 16px; border-radius: 15px 15px 15px 2px; align-self: flex-start; max-width: 85%; font-size: 0.85rem; color: var(--slate-700); line-height: 1.5;">
+                    Analyzing metadata... Welcome to the Elite Command Dashboard. How can I assist with your social impact strategy today?
+                </div>
+            </div>
+
+            <!-- Typing Indicator -->
+            <div id="ai-typing" style="display: none; padding: 10px 20px; font-size: 0.75rem; color: var(--slate-400); font-style: italic;">
+                Analyzing core protocol...
+            </div>
+
+            <!-- Input Area -->
+            <div style="padding: 15px; border-top: 1px solid rgba(0,0,0,0.05); display: flex; gap: 10px; background: white;">
+                <input type="text" id="ai-input" onkeypress="handleChatMessage(event)" placeholder="Request platform intelligence..." style="flex: 1; padding: 12px 15px; border-radius: 12px; border: 1px solid var(--slate-200); font-size: 0.85rem; outline: none;">
+                <button onclick="sendChatMessage()" style="width: 40px; height: 40px; border-radius: 10px; background: var(--primary); color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-paper-plane" style="font-size: 0.9rem;"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleAIChat() {
+            const window = document.getElementById('ai-chat-window');
+            const fab = document.getElementById('ai-fab');
+            if (window.style.display === 'none' || window.style.display === '') {
+                window.style.display = 'flex';
+                setTimeout(() => {
+                    window.style.opacity = '1';
+                    window.style.transform = 'translateY(0)';
+                }, 10);
+                fab.style.transform = 'rotate(90deg) scale(0.9)';
+            } else {
+                window.style.opacity = '0';
+                window.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    window.style.display = 'none';
+                }, 300);
+                fab.style.transform = 'rotate(0) scale(1)';
+            }
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('ai-input');
+            const msg = input.value.trim();
+            if(!msg) return;
+
+            appendMessage('user', msg);
+            input.value = '';
+
+            const typing = document.getElementById('ai-typing');
+            typing.style.display = 'block';
+
+            try {
+                const response = await fetch('/api/chatbot', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: msg }] }]
+                    })
+                });
+                const data = await response.json();
+                const aiText = data.candidates[0].content.parts[0].text;
+                appendMessage('ai', aiText);
+            } catch (e) {
+                appendMessage('ai', "Neural link interrupted. Please verify system heartbeat.");
+            } finally {
+                typing.style.display = 'none';
+            }
+        }
+
+        function handleChatMessage(e) {
+            if(e.key === 'Enter') sendChatMessage();
+        }
+
+        function appendMessage(sender, text) {
+            const container = document.getElementById('ai-messages');
+            const div = document.createElement('div');
+            
+            const isUser = sender === 'user';
+            div.style.padding = '12px 16px';
+            div.style.borderRadius = isUser ? '15px 15px 2px 15px' : '15px 15px 15px 2px';
+            div.style.alignSelf = isUser ? 'flex-end' : 'flex-start';
+            div.style.maxWidth = '85%';
+            div.style.fontSize = '0.85rem';
+            div.style.lineHeight = '1.5';
+            div.style.background = isUser ? 'var(--primary)' : 'var(--slate-100)';
+            div.style.color = isUser ? 'white' : 'var(--slate-700)';
+            div.style.boxShadow = '0 5px 15px rgba(0,0,0,0.05)';
+            
+            div.innerText = text;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Theme Management Logic
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const icon = document.querySelector('#theme-toggle i');
+            if (theme === 'dark') {
+                icon.className = 'fas fa-sun';
+            } else {
+                icon.className = 'fas fa-moon';
+            }
+        }
+
+        // Initialize Theme
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        })();
+    </script>
+</body>
+</html>

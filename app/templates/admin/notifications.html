@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}Global Notifications Hub | Elite Admin{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar glass" style="border: none; border-right: 1px solid var(--slate-200); background: #0f172a; color: white;">
+        <div style="margin-bottom: 40px; padding: 0 10px;">
+            <p style="font-size: 0.7rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 0.1em;">Master Control</p>
+            <nav style="display: flex; flex-direction: column; gap: 8px;">
+                <a href="/admin" class="btn btn-outline" style="justify-content: flex-start; color: #94a3b8; border: none; width: 100%;">
+                    <i class="fas fa-chart-pie" style="width: 20px;"></i> Analytics Hub
+                </a>
+                <a href="/admin/verify-ngos" class="btn btn-outline" style="justify-content: flex-start; color: #94a3b8; border: none; width: 100%;">
+                    <i class="fas fa-user-shield" style="width: 20px;"></i> NGO Verification
+                </a>
+                <a href="/admin/disaster-response" class="btn btn-outline" style="justify-content: flex-start; color: #94a3b8; border: none; width: 100%;">
+                    <i class="fas fa-shield-virus" style="width: 20px;"></i> Disaster Response
+                </a>
+                <a href="/admin/data-hub" class="btn btn-outline" style="justify-content: flex-start; color: #94a3b8; border: none; width: 100%;">
+                    <i class="fas fa-database" style="width: 20px;"></i> Elite Data Hub
+                </a>
+                <a href="/admin/notifications" class="btn" style="justify-content: flex-start; background: #2563eb; color: white; border: none; width: 100%;">
+                    <i class="fas fa-satellite-dish" style="width: 20px;"></i> Global Broadcast
+                </a>
+                <a href="/admin/audit-logs" class="btn btn-outline" style="justify-content: flex-start; color: #94a3b8; border: none; width: 100%;">
+                    <i class="fas fa-clock-rotate-left" style="width: 20px;"></i> Audit Logs
+                </a>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header style="margin-bottom: 40px;">
+            <span class="badge badge-primary">UnitySync Broadcast Protocol</span>
+            <h1 style="font-size: 2.2rem; margin-top: 8px;">Global Notification Hub</h1>
+            <p style="color: var(--slate-500);">Send high-level announcements and operational alerts to the entire network.</p>
+        </header>
+
+        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 32px;">
+            <!-- Broadcast Composer -->
+            <div class="elite-card">
+                <h3 style="margin-bottom: 24px;">Elite Broadcast Composer</h3>
+                
+                <div style="margin-bottom: 30px;">
+                    <label style="display: block; font-size: 0.75rem; font-weight: 800; color: var(--slate-400); text-transform: uppercase; margin-bottom: 12px;">Target Impact Audience</label>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                        <div class="audience-card" onclick="setTarget('volunteers')" id="target-volunteers">
+                            <i class="fas fa-user-gear"></i>
+                            <span>Volunteers</span>
+                        </div>
+                        <div class="audience-card" onclick="setTarget('donors')" id="target-donors">
+                            <i class="fas fa-hand-holding-heart"></i>
+                            <span>Donors</span>
+                        </div>
+                        <div class="audience-card" onclick="setTarget('all')" id="target-all">
+                            <i class="fas fa-globe"></i>
+                            <span>All Users</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    <label style="display: block; font-size: 0.75rem; font-weight: 800; color: var(--slate-400); text-transform: uppercase; margin-bottom: 12px;">Message Content</label>
+                    <textarea id="broadcast-msg" rows="6" style="width: 100%; padding: 20px; border: 1px solid var(--slate-200); border-radius: 16px; font-size: 1rem; outline: none; background: var(--slate-50);" placeholder="Write your global announcement here..."></textarea>
+                    <p style="font-size: 0.75rem; color: var(--slate-400); margin-top: 10px;">This message will be prefixed with 'ANNOUNCEMENT:' and dispatched via the SMSService protocol.</p>
+                </div>
+
+                <button id="broadcast-btn" onclick="sendBroadcast()" class="btn btn-primary" style="width: 100%; padding: 18px; border-radius: 16px; font-weight: 700; letter-spacing: 0.05em; box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2);">
+                    <i class="fas fa-paper-plane mr-2"></i> INITIATE GLOBAL PROTOCOL
+                </button>
+            </div>
+
+            <!-- Broadcast History Preview -->
+            <div>
+                <div class="elite-card" style="margin-bottom: 30px; border-left: 5px solid var(--success);">
+                    <h4 style="margin-bottom: 10px;">Network Reach</h4>
+                    <p style="font-size: 2rem; font-weight: 800; color: var(--success);">{{ recipients_count if recipients_count else 'ACTIVE' }}</p>
+                    <p style="font-size: 0.8rem; color: var(--slate-400);">System ready for mass communication.</p>
+                </div>
+
+                <div class="elite-card">
+                    <h3 style="margin-bottom: 20px;">Elite Templates</h3>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <div class="template-item" onclick="useTemplate('Disaster support protocol initiated. Please check your local disaster hub for deployment.')">
+                            <p style="font-size: 0.85rem; font-weight: 700;">Emergency Support</p>
+                            <p style="font-size: 0.7rem; color: var(--slate-500);">Quick mobilization alert.</p>
+                        </div>
+                        <div class="template-item" onclick="useTemplate('New high-impact mission available. Your skills match this regional requirement.')">
+                            <p style="font-size: 0.85rem; font-weight: 700;">Skill-Based Opportunity</p>
+                            <p style="font-size: 0.7rem; color: var(--slate-500);">Volunteer targeted message.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<style>
+    .audience-card {
+        padding: 20px;
+        border: 2px solid var(--slate-200);
+        border-radius: 16px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        color: var(--slate-500);
+    }
+    .audience-card i { font-size: 1.5rem; }
+    .audience-card.active {
+        border-color: var(--primary);
+        background: rgba(79, 70, 229, 0.05);
+        color: var(--primary);
+    }
+    .template-item {
+        padding: 15px;
+        border: 1px solid var(--slate-100);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .template-item:hover { background: var(--slate-50); }
+</style>
+
+<script>
+    let selectedTarget = 'all';
+
+    function setTarget(target) {
+        selectedTarget = target;
+        document.querySelectorAll('.audience-card').forEach(c => c.classList.remove('active'));
+        document.getElementById('target-' + target).classList.add('active');
+    }
+
+    function useTemplate(text) {
+        document.getElementById('broadcast-msg').value = text;
+    }
+
+    async function sendBroadcast() {
+        const message = document.getElementById('broadcast-msg').value;
+        if (!message) {
+            alert('Please compose a message first.');
+            return;
+        }
+
+        if (!confirm(`Confirm global broadcast to ${selectedTarget}? This cannot be undone.`)) return;
+
+        const btn = document.getElementById('broadcast-btn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> BROADCASTING...';
+        btn.disabled = true;
+
+        try {
+            const response = await fetch('/api/admin/broadcast', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ target: selectedTarget, message: message })
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                alert(`SUCCESS: Broadcast protocol reaching ${data.reached} targets.`);
+            } else {
+                alert('ERROR: Broadcast protocol failure.');
+            }
+        } catch (e) {
+            alert('CRITICAL ERROR: Protocol interrupted.');
+        } finally {
+            btn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> INITIATE GLOBAL PROTOCOL';
+            btn.disabled = false;
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => setTarget('all'));
+</script>
+{% endblock %}

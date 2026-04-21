@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Elite Dispatch | Volunteer Control{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar glass" style="border: none; border-right: 1px solid var(--slate-200);">
+        <div style="margin-bottom: 40px;">
+            <p style="font-size: 0.75rem; color: var(--slate-400); font-weight: 700; text-transform: uppercase; margin-bottom: 20px;">Volunteer Menu</p>
+            <nav style="display: flex; flex-direction: column; gap: 10px;">
+                <a href="#" class="btn btn-outline" style="justify-content: flex-start; border: none; background: var(--primary-alpha); color: var(--primary);">
+                    <i class="fas fa-radar"></i> Active Missions
+                </a>
+                <a href="#" class="btn btn-outline" style="justify-content: flex-start; border: none;">
+                    <i class="fas fa-certificate"></i> Skills & Badges
+                </a>
+                <a href="#" class="btn btn-outline" style="justify-content: flex-start; border: none;">
+                    <i class="fas fa-ranking-star"></i> Leaderboard
+                </a>
+            </nav>
+        </div>
+        
+        <div style="margin-top: auto; padding: 20px; background: rgba(16, 185, 129, 0.05); border: 1px solid var(--success); border-radius: 20px; text-align: center;">
+            <i class="fas fa-medal" style="font-size: 1.5rem; color: var(--success); margin-bottom: 10px;"></i>
+            <h5 style="font-size: 0.9rem;">Impact Legend</h5>
+            <p style="font-size: 0.7rem; color: var(--slate-500);">Top 1% Volunteer this month</p>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+            <div class="animate-up">
+                <span class="badge badge-success" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">Level 4 Elite Operative</span>
+                <h1 style="font-size: 2.2rem; margin-top: 8px;">Welcome, {{ user.name if user.name else user.email.split('@')[0] }}</h1>
+                <p style="color: var(--slate-500);">Your current mission availability is set to <strong>High Urgency Response</strong>.</p>
+            </div>
+            <div style="display: flex; gap: 15px;">
+                <button class="btn btn-primary"><i class="fas fa-map-marker-alt"></i> Share Live Location</button>
+            </div>
+        </header>
+
+        <!-- Stats Grid -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 40px;">
+            <div class="stat-widget elite-card animate-up">
+                <span class="stat-label">Hours Contributed</span>
+                <span class="stat-value">124</span>
+                <span style="font-size: 0.8rem; color: var(--success); font-weight: 600;"><i class="fas fa-arrow-up"></i> +42h last week</span>
+            </div>
+            <div class="stat-widget elite-card animate-up" style="animation-delay: 0.1s;">
+                <span class="stat-label">Missions Completed</span>
+                <span class="stat-value">38</span>
+                <span style="font-size: 0.8rem; color: var(--slate-400);">Unified Impact</span>
+            </div>
+            <div class="stat-widget elite-card animate-up" style="animation-delay: 0.2s;">
+                <span class="stat-label">Trust Score</span>
+                <span class="stat-value">98.5</span>
+                <span style="font-size: 0.8rem; color: var(--primary); font-weight: 600;">Verified Hero</span>
+            </div>
+            <div class="stat-widget elite-card animate-up" style="animation-delay: 0.3s;">
+                <span class="stat-label">Skill Points</span>
+                <span class="stat-value">2.4k</span>
+                <span style="font-size: 0.8rem; color: var(--success); font-weight: 600;">Logistics Expert</span>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px;">
+            <!-- Active Missions -->
+            <div class="elite-card animate-up" style="animation-delay: 0.4s;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+                    <h3>Elite Dispatch Queue</h3>
+                    <span class="badge badge-primary">3 New Missions</span>
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <!-- Mission 1 -->
+                    <div style="padding: 24px; background: var(--slate-50); border-radius: 16px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--primary);">
+                        <div>
+                            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                                <span class="badge badge-primary" style="font-size: 0.65rem;">Logistics</span>
+                                <span class="badge" style="background: rgba(239, 68, 68, 0.1); color: var(--danger); font-size: 0.65rem;">Urgent</span>
+                            </div>
+                            <h4 style="font-size: 1.1rem; margin-bottom: 4px;">Medication Transport #902</h4>
+                            <p style="font-size: 0.85rem; color: var(--slate-500);"><i class="fas fa-location-dot"></i> Warangal Hub → Rural Clinic C</p>
+                        </div>
+                        <button class="btn btn-primary" style="padding: 10px 24px;">Accept Mission</button>
+                    </div>
+                    
+                    <!-- Mission 2 -->
+                    <div style="padding: 24px; background: var(--slate-50); border-radius: 16px; display: flex; justify-content: space-between; align-items: center; opacity: 0.8;">
+                        <div>
+                            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                                <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: var(--success); font-size: 0.65rem;">Education</span>
+                            </div>
+                            <h4 style="font-size: 1.1rem; margin-bottom: 4px;">Weekend Teaching Session</h4>
+                            <p style="font-size: 0.85rem; color: var(--slate-500);"><i class="fas fa-location-dot"></i> Community Center H</p>
+                        </div>
+                        <button class="btn btn-outline" style="padding: 10px 24px;">View Details</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Skill Badges -->
+            <div class="elite-card animate-up" style="animation-delay: 0.5s;">
+                <h3 style="margin-bottom: 24px;">Skill Matrix</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div style="padding: 20px; background: var(--slate-50); border-radius: 16px; text-align: center;">
+                        <i class="fas fa-truck-fast" style="font-size: 1.5rem; color: var(--primary); margin-bottom: 10px;"></i>
+                        <h5 style="font-size: 0.85rem;">Logistics Master</h5>
+                    </div>
+                    <div style="padding: 20px; background: var(--slate-50); border-radius: 16px; text-align: center;">
+                        <i class="fas fa-user-doctor" style="font-size: 1.5rem; color: var(--success); margin-bottom: 10px;"></i>
+                        <h5 style="font-size: 0.85rem;">Medical First</h5>
+                    </div>
+                    <div style="padding: 20px; background: var(--slate-50); border-radius: 16px; text-align: center;">
+                        <i class="fas fa-chalkboard-user" style="font-size: 1.5rem; color: var(--secondary); margin-bottom: 10px;"></i>
+                        <h5 style="font-size: 0.85rem;">Edu-Mentor</h5>
+                    </div>
+                    <div style="padding: 20px; background: var(--slate-50); border-radius: 16px; text-align: center;">
+                        <i class="fas fa-hand-holding-box" style="font-size: 1.5rem; color: var(--warning); margin-bottom: 10px;"></i>
+                        <h5 style="font-size: 0.85rem;">Ration Expert</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

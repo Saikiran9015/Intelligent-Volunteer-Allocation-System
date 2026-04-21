@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Public Impact Analytics | UnitySync Platform{% endblock %}
+
+{% block content %}
+<section class="hero" style="min-height: 100vh; padding: 100px 0; background: linear-gradient(135deg, #f8f9ff 0%, #e0e7ff 100%);">
+    <div class="container animate-up">
+        <div style="text-align: center; margin-bottom: 60px;">
+            <span class="badge" style="background: rgba(79, 70, 229, 0.1); color: var(--primary);">Open Transparency Protocol</span>
+            <h1 style="font-size: 3.5rem; font-weight: 800; margin-top: 15px;">Global Social Impact</h1>
+            <p style="color: var(--slate-500); max-width: 700px; margin: 20px auto; font-size: 1.1rem;">
+                Real-time visibility into the resource coordination and humanitarian impact driven by the UnitySync Elite network.
+            </p>
+        </div>
+
+        <!-- Global Stats -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-bottom: 60px;">
+            <div class="elite-card" style="text-align: center; padding: 40px;">
+                <p style="color: var(--slate-400); font-size: 0.85rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px;">Total Impact Value</p>
+                <h2 style="font-size: 3rem; font-weight: 800; color: var(--primary);">{{ total_impact }}</h2>
+                <div style="width: 50px; height: 4px; background: var(--primary); margin: 20px auto; border-radius: 2px;"></div>
+                <p style="font-size: 0.9rem; color: var(--slate-600);">Funds & Resources Distributed</p>
+            </div>
+            <div class="elite-card" style="text-align: center; padding: 40px;">
+                <p style="color: var(--slate-400); font-size: 0.85rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px;">Network NGOs</p>
+                <h2 style="font-size: 3rem; font-weight: 800; color: var(--success);">{{ ngos }}</h2>
+                <div style="width: 50px; height: 4px; background: var(--success); margin: 20px auto; border-radius: 2px;"></div>
+                <p style="font-size: 0.9rem; color: var(--slate-600);">Verified Delivery Partners</p>
+            </div>
+            <div class="elite-card" style="text-align: center; padding: 40px;">
+                <p style="color: var(--slate-400); font-size: 0.85rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px;">Active Volunteers</p>
+                <h2 style="font-size: 3rem; font-weight: 800; color: #2563eb;">{{ volunteers }}</h2>
+                <div style="width: 50px; height: 4px; background: #2563eb; margin: 20px auto; border-radius: 2px;"></div>
+                <p style="font-size: 0.9rem; color: var(--slate-600);">Real-time Social Responders</p>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 40px;">
+            <!-- Regional Impact List -->
+            <div class="elite-card" style="padding: 40px;">
+                <h3 style="margin-bottom: 30px;">Impact by Region</h3>
+                <div style="display: flex; flex-direction: column; gap: 25px;">
+                    {% for r in regions %}
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 700;">
+                            <span>{{ r.region }}</span>
+                            <span style="color: var(--primary);">₹{{ r.impact|int|round }}</span>
+                        </div>
+                        <div style="height: 10px; background: var(--slate-100); border-radius: 5px; overflow: hidden;">
+                            <div style="height: 100%; width: {{ (r.impact / 1245000 * 100)|int }}%; background: var(--primary); border-radius: 5px;"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Impact Visualization -->
+            <div class="elite-card" style="padding: 40px;">
+                <h3 style="margin-bottom: 30px;">Engagement Growth Protocol</h3>
+                <div style="height: 400px;">
+                    <canvas id="publicGrowthChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .elite-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const ctx = document.getElementById('publicGrowthChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['January', 'February', 'March', 'April (Live)'],
+                datasets: [{
+                    label: 'Volunteer Activations',
+                    data: [1200, 2500, 3800, {{ volunteers }}],
+                    backgroundColor: '#4f46e5',
+                    borderRadius: 12,
+                    barThickness: 40
+                }, {
+                    label: 'NGO Onboarding',
+                    data: [40, 85, 130, {{ ngos }}],
+                    backgroundColor: '#10b981',
+                    borderRadius: 12,
+                    barThickness: 40
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' } },
+                scales: {
+                    x: { grid: { display: false } },
+                    y: { grid: { borderDash: [5, 5] } }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

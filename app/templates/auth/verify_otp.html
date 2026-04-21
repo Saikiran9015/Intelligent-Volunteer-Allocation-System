@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Verify OTP - UnitySync{% endblock %}
+
+{% block content %}
+<section class="hero" style="min-height: 80vh; display: flex; align-items: center;">
+    <div class="container">
+        <div class="feature-card" style="max-width: 450px; margin: 0 auto; text-align: left;">
+            <div class="section-header" style="margin-bottom: 30px;">
+                <h2 style="font-size: 2rem;">Security Verification</h2>
+                <p>Enter the 5-digit OTP sent to your email.</p>
+            </div>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="badge" style="background: rgba(79, 70, 229, 0.1); color: var(--primary); width: 100%; margin-bottom: 20px; text-align: center;">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form action="{{ url_for('auth.verify_otp') }}" method="POST">
+                <div style="margin-bottom: 30px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Verification Code</label>
+                    <input type="text" name="otp" required maxlength="5" placeholder="12345" style="width: 100%; padding: 15px; border: 1px solid #e2e8f0; border-radius: 8px; font-family: inherit; font-size: 1.5rem; text-align: center; letter-spacing: 10px;">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Verify & Complete</button>
+            </form>
+            
+            <p style="margin-top: 24px; text-align: center; color: var(--text-muted);">
+                Didn't receive the code? <a href="#" style="color: var(--primary); font-weight: 600; text-decoration: none;">Resend OTP</a>
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}

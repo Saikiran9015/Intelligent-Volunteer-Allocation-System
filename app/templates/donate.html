@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}Donate Now | UnitySync{% endblock %}
+
+{% block content %}
+<section class="hero" style="padding: 60px 0; background: linear-gradient(135deg, #f8f9ff 0%, #e0e7ff 100%);">
+    <div class="container">
+        <div class="feature-card" style="max-width: 800px; margin: 0 auto; padding: 40px; text-align: left;">
+            <div class="section-header" style="margin-bottom: 40px; text-align: left;">
+                <h2 style="font-size: 2.5rem; margin-bottom: 10px;">Make an Impact Today</h2>
+                <p>Choose how you want to support our NGO partners.</p>
+            </div>
+            
+            <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px;">
+                <div id="btn-money" class="btn" style="padding: 30px; border: 2px solid var(--primary); background: rgba(79, 70, 229, 0.05); text-align: center; cursor: pointer;">
+                    <i class="fas fa-hand-holding-usd" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 15px;"></i>
+                    <h3 style="margin-bottom: 5px;">Monetary Aid</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-muted);">Quick and secure online payments.</p>
+                </div>
+                <div id="btn-physical" class="btn btn-outline" style="padding: 30px; border: 2px solid #e2e8f0; text-align: center; cursor: pointer;">
+                    <i class="fas fa-box-heart" style="font-size: 2.5rem; color: var(--text-muted); margin-bottom: 15px;"></i>
+                    <h3 style="margin-bottom: 5px;">Physical Goods</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-muted);">Donate clothes, food, or books.</p>
+                </div>
+            </div>
+
+            <form id="donation-form" action="/api/donate" method="POST">
+                <!-- Monetary Details -->
+                <div id="money-section">
+                    <div style="margin-bottom: 25px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Amount (₹)</label>
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px;">
+                            <button type="button" class="btn btn-outline" style="padding: 10px;" onclick="setAmount(500)">₹500</button>
+                            <button type="button" class="btn btn-outline" style="padding: 10px;" onclick="setAmount(1000)">₹1000</button>
+                            <button type="button" class="btn btn-outline" style="padding: 10px;" onclick="setAmount(5000)">₹5000</button>
+                            <input type="number" id="custom-amount" placeholder="Custom" style="padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Physical Details (Hidden by default) -->
+                <div id="physical-section" style="display: none;">
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Select Item Type</label>
+                        <select name="item_type" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            <option value="clothes">Clothes & Blankets</option>
+                            <option value="food">Dry Ration / Food</option>
+                            <option value="books">Educational Books</option>
+                            <option value="medical">Medical Supplies</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Pickup Address</label>
+                        <textarea name="address" rows="3" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;" placeholder="Full address for volunteer pickup..."></textarea>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Personal Information</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <input type="text" name="name" placeholder="Full Name" required style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                        <input type="email" name="email" placeholder="Email Address" required style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                    </div>
+                </div>
+
+                <button type="submit" id="main-submit-btn" class="btn btn-primary" style="width: 100%; padding: 16px; font-size: 1.1rem;">
+                    <span id="submit-text">Complete Secure Payment</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script>
+    const btnMoney = document.getElementById('btn-money');
+    const btnPhysical = document.getElementById('btn-physical');
+    const moneySection = document.getElementById('money-section');
+    const physicalSection = document.getElementById('physical-section');
+    const submitText = document.getElementById('submit-text');
+
+    btnMoney.addEventListener('click', () => {
+        btnMoney.style.background = 'rgba(79, 70, 229, 0.05)';
+        btnMoney.style.borderColor = 'var(--primary)';
+        btnPhysical.style.background = 'transparent';
+        btnPhysical.style.borderColor = '#e2e8f0';
+        moneySection.style.display = 'block';
+        physicalSection.style.display = 'none';
+        submitText.innerText = 'Complete Secure Payment';
+    });
+
+    btnPhysical.addEventListener('click', () => {
+        btnPhysical.style.background = 'rgba(79, 70, 229, 0.05)';
+        btnPhysical.style.borderColor = 'var(--primary)';
+        btnMoney.style.background = 'transparent';
+        btnMoney.style.borderColor = '#e2e8f0';
+        moneySection.style.display = 'none';
+        physicalSection.style.display = 'block';
+        submitText.innerText = 'Schedule Pickup Request';
+    });
+
+    function setAmount(amt) {
+        document.getElementById('custom-amount').value = amt;
+    }
+
+    const donationForm = document.getElementById('donation-form');
+    donationForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const isMonetary = moneySection.style.display !== 'none';
+        const formData = new FormData(donationForm);
+        const data = Object.fromEntries(formData.entries());
+        
+        if (isMonetary) {
+            const amount = document.getElementById('custom-amount').value;
+            if (!amount) {
+                alert("Please enter an amount");
+                return;
+            }
+            
+            // Create Razorpay Order
+            const response = await fetch('/api/payment/create-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount: amount })
+            });
+            const order = await response.json();
+            
+            const options = {
+                "key": "{{ config['RAZORPAY_KEY_ID'] }}",
+                "amount": order.amount,
+                "currency": "INR",
+                "name": "UnitySync NGO",
+                "description": "Donation for Impact",
+                "order_id": order.id,
+                "handler": async function (response) {
+                    const verifyResponse = await fetch('/api/payment/verify', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
+                            amount: amount,
+                            email: data.email
+                        })
+                    });
+                    const result = await verifyResponse.json();
+                    if (result.status === 'success') {
+                        alert("Donation successful! Thank you for your support.");
+                        window.location.href = "/visuals";
+                    } else {
+                        alert("Payment verification failed.");
+                    }
+                },
+                "prefill": {
+                    "name": data.name,
+                    "email": data.email
+                },
+                "theme": {
+                    "color": "#4f46e5"
+                }
+            };
+            const rzp = new Razorpay(options);
+            rzp.open();
+        } else {
+            // Physical Pickup
+            const response = await fetch('/api/donate', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            alert(result.msg);
+            if (response.ok) window.location.href = "/visuals";
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,13 @@
+Flask==2.3.3
+Flask-PyMongo==2.3.0
+pymongo[srv]==4.5.0
+python-dotenv==1.0.0
+requests==2.31.0
+twilio==8.5.0
+openai==1.3.0
+google-generativeai==0.3.0
+flask-socketio==5.3.6
+reportlab==4.0.4
+cohere
+razorpay==1.4.1
+certifi==2023.11.17

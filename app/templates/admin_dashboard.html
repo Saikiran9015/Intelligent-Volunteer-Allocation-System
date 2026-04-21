@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+
+{% block title %}Elite Admin | UnitySync Command Center{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar glass" style="border: none; border-right: 1px solid var(--slate-200); background: #0f172a; color: white;">
+        <div style="margin-bottom: 40px; padding: 0 10px;">
+            <p style="font-size: 0.7rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 0.1em;">Master Control</p>
+            <nav style="display: flex; flex-direction: column; gap: 8px;">
+                <a href="/admin" class="btn" style="justify-content: flex-start; background: #2563eb; color: white; border: none; width: 100%;">
+                    <i class="fas fa-chart-pie" style="width: 20px;"></i> Analytics Hub
+                </a>
+                <a href="/admin/verify-ngos" class="btn btn-outline" style="justify-content: flex-start; color: #94a3b8; border: none; width: 100%;">
+                    <i class="fas fa-user-shield" style="width: 20px;"></i> NGO Verification
+                </a>
+                <a href="/admin/disaster-response" class="btn btn-outline" style="justify-content: flex-start; color: #94a3b8; border: none; width: 100%;">
+                    <i class="fas fa-shield-virus" style="width: 20px;"></i> Disaster Response
+                </a>
+                <a href="/admin/data-hub" class="btn btn-outline" style="justify-content: flex-start; color: #94a3b8; border: none; width: 100%;">
+                    <i class="fas fa-database" style="width: 20px;"></i> Elite Data Hub
+                </a>
+                <a href="/admin/notifications" class="btn btn-outline" style="justify-content: flex-start; color: #94a3b8; border: none; width: 100%;">
+                    <i class="fas fa-satellite-dish" style="width: 20px;"></i> Global Broadcast
+                </a>
+                <a href="/admin/audit-logs" class="btn btn-outline" style="justify-content: flex-start; color: #94a3b8; border: none; width: 100%;">
+                    <i class="fas fa-clock-rotate-left" style="width: 20px;"></i> Audit Logs
+                </a>
+            </nav>
+        </div>
+        
+        <div style="margin-top: auto; padding: 20px; background: rgba(56, 189, 248, 0.05); border-radius: 20px; border: 1px solid rgba(56, 189, 248, 0.1);">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                <div style="width: 8px; height: 8px; background: var(--success); border-radius: 50%; box-shadow: 0 0 10px var(--success);"></div>
+                <span style="font-size: 0.75rem; color: #38bdf8; font-weight: 700;">LIVE CONNECTED</span>
+            </div>
+            <p style="font-size: 0.65rem; color: #94a3b8;">UnitySync Intelligence Protocol V2.4</p>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" style="background: #f8fafc;">
+        <!-- Header & Filters -->
+        <header style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px;" class="animate-up">
+            <div>
+                <span class="badge" style="background: rgba(37, 99, 235, 0.1); color: #2563eb;">Elite Level Admin</span>
+                <h1 style="font-size: 2.2rem; margin-top: 8px;">Intelligence Overview</h1>
+                <p style="color: var(--slate-500);">Data-driven coordination for global community impact.</p>
+            </div>
+            
+            <!-- Elite Command Bar (Filters) -->
+            <div class="glass" style="display: flex; gap: 15px; padding: 15px 25px; border-radius: 24px; border: 1px solid var(--slate-200);">
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 0.65rem; font-weight: 800; color: var(--slate-400); text-transform: uppercase;">State</label>
+                    <select id="state-filter" onchange="refreshData()" style="border: none; background: transparent; font-weight: 700; color: var(--slate-800); outline: none;">
+                        <option value="">All States</option>
+                        <option value="Telangana">Telangana</option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Maharashtra">Maharashtra</option>
+                    </select>
+                </div>
+                <div style="width: 1px; background: var(--slate-200); margin: 5px 0;"></div>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 0.65rem; font-weight: 800; color: var(--slate-400); text-transform: uppercase;">District</label>
+                    <select id="district-filter" onchange="refreshData()" style="border: none; background: transparent; font-weight: 700; color: var(--slate-800); outline: none;">
+                        <option value="">All Districts</option>
+                        <option value="Hyderabad">Hyderabad</option>
+                        <option value="Warangal">Warangal</option>
+                    </select>
+                </div>
+                <div style="width: 1px; background: var(--slate-200); margin: 5px 0;"></div>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 0.65rem; font-weight: 800; color: var(--slate-400); text-transform: uppercase;">Village</label>
+                    <input type="text" id="village-filter" onkeyup="refreshData()" placeholder="Type Village..." style="border: none; background: transparent; font-weight: 700; color: var(--slate-800); outline: none; width: 120px;">
+                </div>
+            </div>
+        </header>
+
+        <!-- Stats Grid -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 24px;">
+            <div class="elite-card animate-up" style="animation-delay: 0.1s;">
+                <p style="color: var(--slate-500); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 15px;">Total Donations</p>
+                <div style="display: flex; align-items: baseline; gap: 10px;">
+                    <h2 id="counter-donations" style="font-size: 1.8rem; font-weight: 800;">₹0</h2>
+                    <span style="font-size: 0.75rem; color: var(--success); font-weight: 700;"><i class="fas fa-arrow-up"></i> 0%</span>
+                </div>
+            </div>
+            <div class="elite-card animate-up" style="animation-delay: 0.2s; border-left: 5px solid var(--primary);">
+                <p style="color: var(--slate-500); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 15px;">Total NGOs</p>
+                <h2 id="counter-ngos" style="font-size: 1.8rem; font-weight: 800;">0</h2>
+            </div>
+            <div class="elite-card animate-up" style="animation-delay: 0.3s; border-left: 5px solid var(--secondary);">
+                <p style="color: var(--slate-500); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 15px;">Total Donors</p>
+                <h2 id="counter-donors" style="font-size: 1.8rem; font-weight: 800;">0</h2>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 40px;">
+            <div class="elite-card animate-up" style="animation-delay: 0.4s; border-left: 5px solid var(--success);">
+                <p style="color: var(--slate-500); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 15px;">Active Volunteers</p>
+                <h2 id="counter-volunteers" style="font-size: 1.8rem; font-weight: 800;">0</h2>
+            </div>
+            <div class="elite-card animate-up" style="animation-delay: 0.5s; border-left: 5px solid var(--warning);">
+                <p style="color: var(--slate-500); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 15px;">Pending NGO KYC</p>
+                <h2 id="counter-kyc" style="font-size: 1.8rem; font-weight: 800;">0</h2>
+            </div>
+            <div class="elite-card animate-up" style="animation-delay: 0.6s; border-left: 5px solid var(--danger);">
+                <p style="color: var(--slate-500); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 15px;">Fraud Risk Flags</p>
+                <h2 id="counter-fraud" style="font-size: 1.8rem; font-weight: 800; color: var(--danger);">0</h2>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px;">
+            <!-- Analytics Visualization -->
+            <div class="elite-card animate-up" style="animation-delay: 0.5s;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                    <h3>Donation Velocity Analytics</h3>
+                    <div style="display: flex; gap: 10px;">
+                        <span class="badge" style="background: rgba(37, 99, 235, 0.05); color: #2563eb; font-size: 0.7rem;">Weekly View</span>
+                        <i class="fas fa-ellipsis-v" style="color: var(--slate-400); cursor: pointer;"></i>
+                    </div>
+                </div>
+                <div style="height: 350px;">
+                    <canvas id="mainAnalyticsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Risk & Fraud Alerts -->
+            <div class="elite-card animate-up" style="animation-delay: 0.6s;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                    <h3 style="color: var(--danger);">High Risk Alerts</h3>
+                    <span class="badge badge-error" style="background: rgba(239, 68, 68, 0.1); color: var(--danger);">Action Required</span>
+                </div>
+                
+                <div id="fraud-list" style="display: flex; flex-direction: column; gap: 20px;">
+                    <!-- Dynamically Loaded -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Verifications Table -->
+        <div class="elite-card animate-up" style="margin-top: 32px; padding: 0; overflow: hidden; animation-delay: 0.7s;">
+            <div style="padding: 24px 30px; border-bottom: 1px solid var(--slate-100); display: flex; justify-content: space-between; align-items: center;">
+                <h3>Pending NGO Verifications</h3>
+                <button class="btn btn-outline" style="font-size: 0.8rem; border-radius: 8px;">View Full Registry</button>
+            </div>
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead style="background: var(--slate-50);">
+                    <tr style="text-align: left;">
+                        <th style="padding: 16px 30px; font-size: 0.75rem; font-weight: 800; color: var(--slate-400); text-transform: uppercase;">NGO Identity</th>
+                        <th style="padding: 16px 30px; font-size: 0.75rem; font-weight: 800; color: var(--slate-400); text-transform: uppercase;">Reg Identifier</th>
+                        <th style="padding: 16px 30px; font-size: 0.75rem; font-weight: 800; color: var(--slate-400); text-transform: uppercase;">Primary Region</th>
+                        <th style="padding: 16px 30px; font-size: 0.75rem; font-weight: 800; color: var(--slate-400); text-transform: uppercase;">Protocol Action</th>
+                    </tr>
+                </thead>
+                <tbody id="kyc-table-body">
+                    <tr style="border-bottom: 1px solid var(--slate-50);">
+                        <td style="padding: 20px 30px; font-weight: 700;">ChildCare Foundation</td>
+                        <td style="padding: 20px 30px; color: var(--slate-500); font-family: monospace;">SEC/122/2024</td>
+                        <td style="padding: 20px 30px;"><span class="badge" style="background: var(--slate-100);">Warangal, IN</span></td>
+                        <td style="padding: 20px 30px;">
+                            <button class="btn" style="padding: 8px 15px; font-size: 0.75rem; background: var(--success); color: white; border: none;">Approve</button>
+                            <button class="btn" style="padding: 8px 15px; font-size: 0.75rem; background: var(--danger); color: white; border: none; margin-left: 8px;">Reject</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let analyticChart;
+
+    async function refreshData() {
+        const state = document.getElementById('state-filter').value;
+        const district = document.getElementById('district-filter').value;
+        const village = document.getElementById('village-filter').value;
+
+        const response = await fetch(`/api/admin/analytics?state=${state}&district=${district}&village=${village}`);
+        const data = await response.json();
+
+        if (data.status === 'success') {
+            // Update Counters
+            document.getElementById('counter-donations').innerText = data.counters.total_donations;
+            document.getElementById('counter-ngos').innerText = data.counters.total_ngos.toLocaleString();
+            document.getElementById('counter-donors').innerText = data.counters.total_donors.toLocaleString();
+            document.getElementById('counter-volunteers').innerText = data.counters.total_volunteers.toLocaleString();
+            document.getElementById('counter-kyc').innerText = data.counters.pending_kyc;
+            document.getElementById('counter-fraud').innerText = data.counters.fraud_flags;
+
+            // Update Chart
+            updateChart(data.chart);
+
+            // Update Fraud Alerts
+            const fraudList = document.getElementById('fraud-list');
+            fraudList.innerHTML = data.fraud_alerts.map(alert => `
+                <div style="padding: 20px; background: #fff; border: 1px solid var(--slate-100); border-radius: 16px; border-left: 4px solid var(--danger);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                        <div>
+                            <h4 style="font-size: 1rem; margin-bottom: 4px;">${alert.reason}</h4>
+                            <p style="font-size: 0.75rem; color: var(--slate-500);">Target: ${alert.id} | IP Protocol: ${alert.ip}</p>
+                        </div>
+                        <span class="badge" style="background: rgba(239, 68, 68, 0.1); color: var(--danger); font-size: 0.6rem;">${alert.risk} Risk</span>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button class="btn btn-primary" style="background: var(--danger); font-size: 0.7rem; padding: 6px 12px; border: none;">Investigate</button>
+                        <button class="btn btn-outline" style="font-size: 0.7rem; padding: 6px 12px; border-radius: 8px;">Mark Safe</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
+
+    function updateChart(chartData) {
+        if (analyticChart) analyticChart.destroy();
+        
+        const ctx = document.getElementById('mainAnalyticsChart').getContext('2d');
+        analyticChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: chartData.labels,
+                datasets: [{
+                    label: 'Velocity (INR)',
+                    data: chartData.values,
+                    borderColor: '#2563eb',
+                    backgroundColor: 'rgba(37, 99, 235, 0.05)',
+                    borderWidth: 4,
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 6,
+                    pointBackgroundColor: '#fff',
+                    pointBorderWidth: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { weight: '600' } } },
+                    y: { grid: { borderDash: [5, 5], color: '#f1f5f9' }, ticks: { color: '#94a3b8' } }
+                }
+            }
+        });
+    }
+
+    // Initial Load
+    document.addEventListener('DOMContentLoaded', refreshData);
+</script>
+{% endblock %}

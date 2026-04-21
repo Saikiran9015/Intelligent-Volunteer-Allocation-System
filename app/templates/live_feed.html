@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}UnitySync | Live NGO Feed{% endblock %}
+
+{% block content %}
+<section class="features" style="background: #f8fafc; padding: 40px 0;">
+    <div class="container">
+        <div style="display: grid; grid-template-columns: 1fr 3fr; gap: 30px;">
+            
+            <!-- Sidebar Filters -->
+            <aside>
+                <div class="feature-card" style="padding: 24px; position: sticky; top: 100px;">
+                    <h3 style="margin-bottom: 20px; font-size: 1.25rem;">Filters</h3>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <label style="display: flex; items: center; gap: 10px; cursor: pointer;">
+                            <input type="checkbox" checked style="width: 18px; height: 18px;"> <span>Emergency Funds</span>
+                        </label>
+                        <label style="display: flex; items: center; gap: 10px; cursor: pointer;">
+                            <input type="checkbox" checked style="width: 18px; height: 18px;"> <span>Food & Supplies</span>
+                        </label>
+                        <label style="display: flex; items: center; gap: 10px; cursor: pointer;">
+                            <input type="checkbox" checked style="width: 18px; height: 18px;"> <span>Medical Aid</span>
+                        </label>
+                    </div>
+                    <button class="btn btn-outline" style="width: 100%; margin-top: 24px; font-size: 0.9rem;">Apply Filters</button>
+                    
+                    <div style="margin-top: 40px; padding: 20px; background: rgba(79, 70, 229, 0.05); border-radius: 12px;">
+                        <h4 style="margin-bottom: 10px; font-size: 1rem;">Post a Need</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Only verified NGOs can post live requests.</p>
+                        <a href="/dashboard" class="btn btn-primary" style="width: 100%; font-size: 0.85rem;">NGO Dashboard</a>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Feed -->
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                    <h2 style="font-size: 2rem;">Active Requests</h2>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; animation: pulse 2s infinite;"></div>
+                        <span id="live-counter" style="font-weight: 600; color: #10b981;">124 Live Requests</span>
+                    </div>
+                </div>
+
+                <div id="request-feed" style="display: flex; flex-direction: column; gap: 20px;">
+                    <!-- Sample Request Item -->
+                    <div class="feature-card" style="border-left: 5px solid #ef4444; padding: 24px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                            <span class="badge" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border-radius: 6px; margin: 0;">Urgent</span>
+                            <span style="font-size: 0.8rem; color: var(--text-muted);">2 mins ago</span>
+                        </div>
+                        <h3 style="margin-bottom: 10px;">Emergency Food Supplies Needed</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 20px;">Peace Haven Foundation needs dry rations for 50 families due to local flooding.</p>
+                        <div style="display: flex; justify-content: space-between; items: center;">
+                            <div style="display: flex; items: center; gap: 8px; color: var(--text-muted); font-size: 0.85rem;">
+                                <i class="fas fa-map-marker-alt"></i> Warangal, Telangana
+                            </div>
+                            <button class="btn btn-primary" style="padding: 8px 20px; font-size: 0.9rem;">Respond</button>
+                        </div>
+                    </div>
+
+                    <div class="feature-card" style="border-left: 5px solid var(--secondary); padding: 24px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                            <span class="badge" style="background: rgba(14, 165, 233, 0.1); color: var(--secondary); border-radius: 6px; margin: 0;">Logistics</span>
+                            <span style="font-size: 0.8rem; color: var(--text-muted);">15 mins ago</span>
+                        </div>
+                        <h3 style="margin-bottom: 10px;">Volunteer Drivers for Medical Kit Delivery</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 20px;">Assistance needed in transporting 20 dialysis kits to rural clinics.</p>
+                        <div style="display: flex; justify-content: space-between; items: center;">
+                            <div style="display: flex; items: center; gap: 8px; color: var(--text-muted); font-size: 0.85rem;">
+                                <i class="fas fa-map-marker-alt"></i> Bengaluru Hub
+                            </div>
+                            <button class="btn btn-primary" style="padding: 8px 20px; font-size: 0.9rem;">Support</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+@keyframes pulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+</style>
+
+<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+<script>
+    const socket = io();
+    
+    socket.on('new_request', function(data) {
+        const feed = document.getElementById('request-feed');
+        const newItem = document.createElement('div');
+        newItem.className = 'feature-card';
+        newItem.style.borderLeft = `5px solid ${data.urgency === 'High' ? '#ef4444' : 'var(--secondary)'}`;
+        newItem.style.padding = '24px';
+        newItem.style.animation = 'fadeIn 0.5s ease-out';
+        
+        newItem.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                <span class="badge" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border-radius: 6px; margin: 0;">${data.category}</span>
+                <span style="font-size: 0.8rem; color: var(--text-muted);">Just now</span>
+            </div>
+            <h3 style="margin-bottom: 10px;">${data.title}</h3>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">${data.description}</p>
+            <div style="display: flex; justify-content: space-between; items: center;">
+                <div style="display: flex; items: center; gap: 8px; color: var(--text-muted); font-size: 0.85rem;">
+                    <i class="fas fa-map-marker-alt"></i> ${data.location}
+                </div>
+                <button class="btn btn-primary" style="padding: 8px 20px; font-size: 0.9rem;">Respond</button>
+            </div>
+        `;
+        feed.prepend(newItem);
+        
+        // Update counter (simple increment for demo)
+        const counter = document.getElementById('live-counter');
+        const currentCount = parseInt(counter.innerText);
+        counter.innerText = (currentCount + 1) + " Live Requests";
+    });
+</script>
+{% endblock %}
